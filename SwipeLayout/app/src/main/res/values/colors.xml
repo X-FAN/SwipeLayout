@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="light_blue">#00bcd4</color>
+    <color name="deep_blue">#0097a7</color>
+    <color name="red">#FF4081</color>
+    <color name="common_window_bg">#EEEEEE</color>
+    <color name="gap_line">#cfd8dc</color>
+    <color name="light_gray">#888888</color>
+    <color name="light_red">#CC6D56</color>
+    <color name="purple">#614DB3</color>
+    <color name="blue">#3C8DC4</color>
+    <color name="orange">#fd8d20</color>
+    <color name="deep_orange">#e97a0f</color>
+    <color name="white">#ffffff</color>
+</resources>
