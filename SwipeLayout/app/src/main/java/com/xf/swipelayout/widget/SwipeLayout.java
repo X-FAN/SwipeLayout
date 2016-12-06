@@ -1,8 +1,10 @@
 package com.xf.swipelayout.widget;
 
 import android.content.Context;
+import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.widget.ViewDragHelper;
 import android.util.AttributeSet;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +25,7 @@ public class SwipeLayout extends FrameLayout {
     private float mDownX;
     private float mDownY;
 
+    private GestureDetectorCompat mGestureDetector;
     private SwipeListener mSwipeListener;
     private View mTopView;
     private View mBottomView;
@@ -39,6 +42,16 @@ public class SwipeLayout extends FrameLayout {
 
     public SwipeLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        mGestureDetector = new GestureDetectorCompat(context, new GestureDetector.SimpleOnGestureListener() {
+
+            @Override
+            public boolean onSingleTapUp(MotionEvent e) {
+                if (mSwipeListener != null) {
+                    mSwipeListener.onClickListener();
+                }
+                return super.onSingleTapUp(e);
+            }
+        });
         mViewDragHelper = ViewDragHelper.create(this, new ViewDragHelper.Callback() {
             @Override
             public boolean tryCaptureView(View child, int pointerId) {//只对mTopView进行处理
@@ -128,6 +141,7 @@ public class SwipeLayout extends FrameLayout {
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
+        mGestureDetector.onTouchEvent(ev);
         ViewParent viewParent = getParent();
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
@@ -144,7 +158,7 @@ public class SwipeLayout extends FrameLayout {
                     angle = (float) Math.toDegrees(Math.atan(Math.abs(distanceY / distanceX)));
                 }
                 if (angle < 45 && viewParent != null) {
-                    viewParent.requestDisallowInterceptTouchEvent(true);//让父控件不要处理事件,交给子控件
+                    viewParent.requestDisallowInterceptTouchEvent(true);//让父控件不要处理事件,交给自己处理
                 }
                 break;
             case MotionEvent.ACTION_CANCEL:
@@ -203,9 +217,14 @@ public class SwipeLayout extends FrameLayout {
 
     //回滚到右边(只能在onViewReleased里使用该方法)
     private void scrollToRightEdge() {
-        mViewDragHelper.settleCapturedViewAt(0, 0);
-        invalidate();
-        mState = CLOSE;
+        if (mState != CLOSE) {
+            mViewDragHelper.settleCapturedViewAt(0, 0);
+            invalidate();
+            mState = CLOSE;
+            if (mSwipeListener != null) {
+                mSwipeListener.onCloseListener(this);
+            }
+        }
     }
 
     public void smoothClose() {
@@ -225,6 +244,10 @@ public class SwipeLayout extends FrameLayout {
 
     public interface SwipeListener {
         void onOpenListener(SwipeLayout swipeLayout);
+
+        void onCloseListener(SwipeLayout swipeLayout);
+
+        void onClickListener();
     }
 
     public void setSwipeListener(SwipeListener mSwipeListener) {

@@ -2,6 +2,7 @@ package com.xf.swipelayout.Adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,7 @@ import butterknife.ButterKnife;
 
 public class SwipeAdapter extends RecyclerView.Adapter<SwipeAdapter.ViewHolder> {
 
+    private final String TAG = "SwipeAdapter";
     private int mOpenPosition = -1;
 
     private List<String> mStrings;
@@ -42,7 +44,7 @@ public class SwipeAdapter extends RecyclerView.Adapter<SwipeAdapter.ViewHolder> 
         viewHolder.delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context, "删除", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "删除" + viewHolder.getAdapterPosition(), Toast.LENGTH_SHORT).show();
             }
         });
         viewHolder.edit.setOnClickListener(new View.OnClickListener() {
@@ -60,6 +62,18 @@ public class SwipeAdapter extends RecyclerView.Adapter<SwipeAdapter.ViewHolder> 
                 }
                 mOpenSwipeLayout = swipeLayout;
                 mOpenPosition = viewHolder.getAdapterPosition();
+                Log.d(TAG, "mOpenPosition onOpenListener" + mOpenPosition);
+            }
+
+            @Override
+            public void onCloseListener(SwipeLayout swipeLayout) {
+                mOpenPosition = -1;
+                Log.d(TAG, "mOpenPosition onCloseListener" + mOpenPosition);
+            }
+
+            @Override
+            public void onClickListener() {
+                Toast.makeText(context, "item click" + viewHolder.getAdapterPosition(), Toast.LENGTH_SHORT).show();
             }
         });
         return viewHolder;
